@@ -23,10 +23,22 @@ const groupSlice = createSlice({
       state.isLoading = false;
       state.error = action.payload;
     },
-
-    createGroup: (state, action) => {
+    
+    createGroupRequest: (state, action) => {
       state.isLoading = true;
       state.error = null;
+    },
+    createGroupSuccess: (state, action) => {
+      state.isLoading = false;
+      state.groups.push(action.payload);
+    },
+    createGroupFailure: (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    },
+
+    addGroupFromInvitation: (state, action) => {
+      state.groups.push(action.payload);
     },
   },
 });
@@ -35,9 +47,9 @@ export const {
   getGroupsRequest,
   getGroupsSuccess,
   getGroupsFailure,
-  createGroup,
-  getGroupByIdRequest,
-  getGroupByIdSuccess,
-  getGroupByIdFailure,
+  createGroupRequest,
+  createGroupSuccess,
+  createGroupFailure,
+  addGroupFromInvitation,
 } = groupSlice.actions;
 export default groupSlice.reducer;

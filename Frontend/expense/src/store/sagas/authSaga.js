@@ -2,13 +2,14 @@ import { ApiConstant } from "../../constants/api.constant";
 import { api } from "../../services/api.service";
 import {
   initializeAuth,
+  setUser,
   loginFailure,
   loginSuccess,
   logoutRequest,
   logoutSuccess,
   registerFailure,
   registerSuccess,
-  setUser,
+  logoutFailure,
   } from "../slices/authSlice";
 import { loginRequest, registerRequest } from "../slices/authSlice";
 import { call, put, takeLatest } from "redux-saga/effects";
@@ -22,10 +23,10 @@ function* initializeAuthSaga() {
 
     yield put(getGroupsRequest());
 
-    // Fetch cart items after successful auth initialization
+    console.log("Auth initialization successful");
   } catch (error) {
-    // If token is invalid, remove it
-    localStorage.removeItem("token");
+    console.log("Auth initialization failed:", error);
+    // If token/cookie is invalid, dispatch loginFailure to clear auth state
     yield put(loginFailure("Token không hợp lệ"));
   }
 }
@@ -70,8 +71,15 @@ function* logoutSaga() {
   try {
     yield call(api.post, ApiConstant.auth.logout);
     yield put(logoutSuccess());
+    
+    // Navigate to login page
+    window.location.href = '/login';
   } catch (error) {
     console.error("Logout error:", error);
+    yield put(logoutFailure(error));
+    
+    // Still navigate to login page
+    window.location.href = '/login';
   }
 }
 

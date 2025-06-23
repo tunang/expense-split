@@ -7,13 +7,19 @@ import authReducer from './slices/authSlice';
 import detailGroupReducer from './slices/detailGroupSlice';
 import groupReducer from './slices/groupSlice';
 import memberGroupReducer from './slices/memberGroupSlice';
-
+import invitationReducer from './slices/invitationSlice';
+import joinRequestReducer from './slices/joinRequestSlice';
+import expenseReducer from './slices/expenseSlice';
+import receivedInvitationReducer from './slices/receivedInvitationSlice';
 // Import sagas
 import { authSaga } from './sagas/authSaga';
 import { detailGroupSaga } from './sagas/detailGroupSaga';
 import { groupSaga } from './sagas/groupSaga';
 import { memberGroupSaga } from './sagas/memberGroupSaga';
-
+import { invitationsSaga } from './sagas/invitationsSaga';
+import joinRequestSaga from './sagas/joinRequestSaga';
+import { expenseSaga } from './sagas/expenseSaga';
+import { receivedInvitationSaga } from './sagas/receivedInvitaionSaga';
 // Create saga middleware
 const sagaMiddleware = createSagaMiddleware();
 
@@ -24,6 +30,10 @@ function* rootSaga() {
     fork(detailGroupSaga),
     fork(groupSaga),
     fork(memberGroupSaga),
+    fork(invitationsSaga),
+    fork(joinRequestSaga),
+    fork(expenseSaga),
+    fork(receivedInvitationSaga),
   ]);
 }
 
@@ -34,6 +44,10 @@ export const store = configureStore({
     detailGroup: detailGroupReducer,
     group: groupReducer,
     memberGroup: memberGroupReducer,
+    invitation: invitationReducer,
+    joinRequest: joinRequestReducer,
+    expense: expenseReducer,
+    receivedInvitations: receivedInvitationReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

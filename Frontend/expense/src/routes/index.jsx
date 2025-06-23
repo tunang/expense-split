@@ -4,6 +4,7 @@ import Home from "../pages/home";
 import Register from "../pages/auth/register";
 import Login from "../pages/auth/login";
 import DetailGroup from "../pages/group/detailGroup";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -12,7 +13,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Home />,
+        element: (
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/login",
@@ -24,7 +29,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/group/:id",
-        element: <DetailGroup />,
+        element: (
+          <ProtectedRoute>
+            <DetailGroup />
+          </ProtectedRoute>
+        ),
       },
     ],
   },

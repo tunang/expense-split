@@ -22,9 +22,13 @@ const memberGroupSlice = createSlice({
             state.error = action.payload;
             state.isLoading = false;
         },
+        addNewMember: (state, action) => {
+            // Thêm member mới vào danh sách
+            state.members.push(action.payload);
+        },
     }
 })
 
 
-export const { getMembersRequest, getMembersSuccess, getMembersFailure } = memberGroupSlice.actions;
+export const { getMembersRequest, getMembersSuccess, getMembersFailure, addNewMember } = memberGroupSlice.actions;
 export default memberGroupSlice.reducer;

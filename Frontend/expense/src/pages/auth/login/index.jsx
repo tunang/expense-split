@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,6 +24,7 @@ const formSchema = z.object({
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {isLoading, isAuthenticated, error} = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
@@ -39,9 +40,11 @@ const Login = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/");
+      // Redirect to the page user was trying to access, or home page
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, location]);
 
   useEffect(() => {
     if (error) {

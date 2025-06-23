@@ -13,22 +13,27 @@ import {
   UserPlus,
   LogOut,
   Lock,
+  Copy,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import logo from "../../assets/images/logo.png";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { logoutRequest } from "../../store/slices/authSlice";
 const MainLayout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { user, isAuthenticated } = useSelector((state) => state.auth);
-    const handleLogin = () => {
-        navigate("/login");
-    };
-    const handleRegister = () => {
-        navigate("/register");
-    };
+  const handleLogin = () => {
+    navigate("/login");
+  };
+  const handleRegister = () => {
+    navigate("/register");
+  };
   return (
     <div>
       <ScrollToTop />
@@ -82,41 +87,46 @@ const MainLayout = () => {
           )}
 
           {isAuthenticated && (
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="relative">
-                  <User className="w-6 h-6" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-56 mt-2">
-                <div className="flex flex-col gap-2">
-                  <div className="px-3 py-2 border-b">
-                    <p className="font-medium text-sm">Xin chào,</p>
-                    <p className="text-sm text-gray-600 truncate">
-                      {user?.name}
-                    </p>
-                  </div>
-                  <Link to="/profile">
-                    <Button variant="ghost" className="w-full justify-start">
-                      <User2 className="w-4 h-4 mr-2" />
-                      Tài khoản của tôi
-                    </Button>
-                  </Link>
+            <div className="flex items-center gap-2">
+              <p>Xin chào, {user.name}</p>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="icon" className="relative">
+                    <User className="w-6 h-6" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 mt-2">
+                  <div className="flex flex-col gap-2">
+                    <div className="px-3 py-2 border-b">
+                      <p className="font-medium text-sm">{user?.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-xs text-gray-600 truncate">
+                        ID: {user?.id}
+                      </p>
+                      <Copy className="w-4 h-4" />
+                    </div>
+                    </div>
+                    {/* <Link to="/profile">
+                      <Button variant="ghost" className="w-full justify-start">
+                        <User2 className="w-4 h-4 mr-2" />
+                        Tài khoản của tôi
+                      </Button>
+                    </Link> */}
 
-
-                  <div className="border-t pt-2">
-                    <Button
-                      onClick={() => dispatch(logoutRequest())}
-                      variant="ghost"
-                      className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                    >
-                      <LogOut className="w-4 h-4 mr-2" />
-                      Đăng xuất
-                    </Button>
+                    <div className="border-t pt-2">
+                      <Button
+                        onClick={() => dispatch(logoutRequest())}
+                        variant="ghost"
+                        className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <LogOut className="w-4 h-4 mr-2" />
+                        Đăng xuất
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
+            </div>
           )}
         </div>
       </nav>

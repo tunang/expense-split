@@ -10,49 +10,51 @@ import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
 } from "../../../components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+
 import MemberModal from "./member/memberModal";
 import ExpenseModal from "./expense/expenseModal";
+import { getCreatedInvitationsRequest } from "@/store/slices/invitationSlice";
+import { getExpenseRequest } from "@/store/slices/expenseSlice";
+import ExpenseTab from "./table";
 
 const DetailGroup = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
+
   const { group, isLoading, error } = useSelector((state) => state.detailGroup);
   const {
     members,
     isLoading: isLoadingMembers,
     error: errorMembers,
   } = useSelector((state) => state.memberGroup);
+  const { expenses, isLoading: isLoadingExpenses, error: errorExpenses } = useSelector((state) => state.expense);
 
   useEffect(() => {
     dispatch(getGroupByIdRequest(id));
     dispatch(getMembersRequest(id));
+    dispatch(getExpenseRequest(id));
   }, [dispatch, id]);
 
   useEffect(() => {
-    if (error || errorMembers) {
-      toast.error(error || errorMembers);
+    if (error || errorMembers || errorExpenses) {
+      toast.error(error || errorMembers || errorExpenses);
     }
-  }, [error, errorMembers]);
+  }, [error, errorMembers, errorExpenses]);
 
-  return isLoading ? (
+  const getTotalExpense = () => {
+    return expenses.reduce((acc, expense) => acc + parseFloat(expense.discountedAmount), 0);
+  }
+
+  return isLoading || isLoadingMembers || isLoadingExpenses ? (
     <div>Loading...</div>
   ) : (
     <div>
       <div className="flex justify-between items-center border-b border-gray-200 pb-4">
         <div className="">
           <h1 className="text-2xl font-bold">{group?.name}</h1>
-          <h2 className="text-sm text-gray-500">{members.length} members</h2>
+          <h2 className="text-sm text-gray-500">{members.length} members - {group?.id}</h2>
         </div>
 
         <div className="flex gap-2">
@@ -60,14 +62,27 @@ const DetailGroup = () => {
           <MemberModal members={members} />
 
           {/*Add Expense button */}
-          <ExpenseModal />
+          <ExpenseModal groupId={id} members={members} />
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-6">
+      <div className="grid grid-cols-12 gap-6 mt-6">
         {/* Left column */}
         <div className="col-span-4 flex flex-col gap-4">
-          <Card></Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h2 className="text-lg font-bold">Tổng kết</h2>
+              </CardTitle>
+
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between items-center">
+                <h3>Tổng chi tiêu</h3>
+                <h3>{getTotalExpense().toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</h3>
+              </div>
+            </CardContent>
+          </Card>
 
           <Card></Card>
         </div>
@@ -77,10 +92,12 @@ const DetailGroup = () => {
           <Card>
             <CardHeader>
               <CardTitle>
-                <h2 className="text-lg font-bold">Expenses</h2>
+                <h2 className="text-lg font-bold">Chi phí</h2>
               </CardTitle>
-              <CardContent></CardContent>
             </CardHeader>
+            <CardContent>
+              <ExpenseTab />
+            </CardContent>
           </Card>
         </div>
       </div>
