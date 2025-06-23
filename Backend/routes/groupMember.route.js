@@ -5,7 +5,7 @@ import { deleteMember, leaveGroup, getMembers } from '../controllers/groupMember
 const router = express.Router();
 
 
-router.get('/:groupId', protectRoute, groupCreatorRoute, getMembers);
+router.get('/:groupId', protectRoute, getMembers);
 
 //Remove member from group, only group creator 
 router.delete('/group/:groupId/member/:userId', protectRoute, groupCreatorRoute, deleteMember);

@@ -13,7 +13,7 @@ router.get('/',protectRoute, groupCreatorRoute, (req, res) => {
 router.get('/received', protectRoute, getReceivedInvitations);
 
 // Route to retrieve all invitations that the current user sent
-router.get('/sent', protectRoute, getSentInvitations);
+router.get('/group/:groupId/sent', protectRoute, getSentInvitations);
 
 //Create invitations to join a group
 router.post('/group/:groupId/member/:userId', protectRoute, groupCreatorRoute, createInvitation);

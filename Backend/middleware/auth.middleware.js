@@ -63,6 +63,7 @@ const groupCreatorRoute = async (req, res, next) => {
   if(!groupId){
     return res.status(400).json({ message: "Group id not found" });
   }
+  
   const existingGroup = await prisma.group.findUnique({
     where: { id: groupId },
   });

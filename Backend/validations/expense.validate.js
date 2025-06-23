@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const discountTypes = ["NONE", "PERCENTAGE", "FIXED_AMOUNT"];
-const splitTypes = ["EQUAL", "CUSTOM"];
+const splitTypes = ["EQUAL", "PERCENTAGE", "FIXED_AMOUNT", "CUSTOM"];
 
 const expenseValidate = Joi.object({
   id: Joi.string().optional(),

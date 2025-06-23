@@ -6,9 +6,14 @@ const prisma = new PrismaClient();
 
 const getGroups = async (req, res) => {
   try {
+    // Get all groups where user is a member (including groups they created)
     const groups = await prisma.group.findMany({
       where: {
-        creatorId: req.user.id,
+        members: {
+          some: {
+            userId: req.user.id,
+          },
+        },
       },
       select: {
         id: true,
@@ -17,10 +22,26 @@ const getGroups = async (req, res) => {
         creatorId: true,
         createdAt: true,
         updatedAt: true,
+        members: {
+          where: {
+            userId: req.user.id,
+          },
+          select: {
+            role: true,
+          },
+        },
         // password is omitted
       },
     });
-    res.status(200).json({ groups });
+
+    // Map to include user's role in each group
+    const groupsWithRole = groups.map(group => ({
+      ...group,
+      userRole: group.members[0]?.role || null,
+      members: undefined, // Remove members array from response
+    }));
+
+    res.status(200).json({ groups: groupsWithRole });
   } catch (error) {
     console.log("Error in getGroups controller", error.message);
     res.status(500).json({ message: error.message });

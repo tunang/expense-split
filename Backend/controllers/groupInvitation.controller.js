@@ -9,6 +9,21 @@ const getReceivedInvitations = async (req, res) => {
       where: {
         invitedUserId: userId,
       },
+      include: {
+        sender: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+          },
+        },
+        group: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     return res.status(200).json({
@@ -24,10 +39,21 @@ const getReceivedInvitations = async (req, res) => {
 const getSentInvitations = async (req, res) => {
   try {
     const { id: userId } = req.user;
+    const { groupId } = req.params;
     const invitations = await prisma.groupInvitation.findMany({
       where: {
         senderId: userId,
+        groupId: groupId,
       },
+      include: {
+        invitedUser: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+          },
+        },
+      }
     });
 
     return res.status(200).json({
@@ -97,6 +123,15 @@ const createInvitation = async (req, res) => {
         senderId: senderId,
         groupId: groupId,
       },
+      include: {
+        invitedUser: {
+          select: {
+            id: true,
+            fullName: true,
+            username: true,
+          },
+        },
+      }
     });
 
     return res.status(200).json({
@@ -122,21 +157,12 @@ const handleInvitaion = async (req, res) => {
         .json({ message: "Invalid action. Use 'ACCEPT' or 'DECLINE'." });
     }
 
-    // Fetch group and validate creator
-    const group = await prisma.group.findUnique({
-      where: { id: groupId },
-    });
-
-    if (!group) {
-      return res.status(404).json({ message: "Group does not exist" });
-    }
 
     // Find the join request
     const invitation = await prisma.groupInvitation.findUnique({
       where: { id: requestId },
     });
 
-    console.log(invitation);
     if (!invitation || invitation.groupId !== groupId) {
       return res
         .status(404)
@@ -153,7 +179,7 @@ const handleInvitaion = async (req, res) => {
     }
 
     // Update the request
-    const updatedInvitation = await prisma.groupInvitation.update({
+    let updatedInvitation = await prisma.groupInvitation.update({
       where: { id: requestId },
       data: {
         status: action === "ACCEPT" ? "ACCEPTED" : "DECLINED",
@@ -170,6 +196,13 @@ const handleInvitaion = async (req, res) => {
         },
       });
     }
+
+    updatedInvitation = await prisma.groupInvitation.findUnique({
+      where: { id: requestId },
+      include: {
+        group: true,
+      },
+    });
 
     res.status(200).json({
       message: `Invitation ${

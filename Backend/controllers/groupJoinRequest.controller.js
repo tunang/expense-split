@@ -2,6 +2,31 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+
+const getJoinRequest = async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const joinRequest = await prisma.groupJoinRequest.findMany({
+      where: {
+        groupId: groupId,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            profilePicture: true,
+            email: true,
+          },
+        },
+      }
+    });
+    res.status(200).json({ joinRequest });
+  } catch (error) {
+    console.log("Error in getJoinRequest controller", error.message);
+  }
+};
+
 const createJoinRequest = async (req, res) => {
   try {
     const { id } = req.user;
@@ -69,6 +94,7 @@ const createJoinRequest = async (req, res) => {
 
 const handleJoinRequest = async (req, res) => {
   try {
+    console.log(req.body);
     const { id: userId } = req.user;
     const { groupId, requestId } = req.params;
     const { action } = req.body;
@@ -107,6 +133,16 @@ const handleJoinRequest = async (req, res) => {
         status: action === "ACCEPT" ? "ACCEPTED" : "DECLINED",
         respondedAt: new Date(),
       },
+      include: {
+        user: {
+          select: {
+            id: true,
+            fullName: true,
+            profilePicture: true,
+            email: true,
+          },
+        },
+      }
     });
 
     // Optional: Add user to group members if accepted
@@ -131,4 +167,4 @@ const handleJoinRequest = async (req, res) => {
   }
 };
 
-export { createJoinRequest, handleJoinRequest };
+export { createJoinRequest, handleJoinRequest, getJoinRequest};
