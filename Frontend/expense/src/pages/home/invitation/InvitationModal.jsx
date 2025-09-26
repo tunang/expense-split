@@ -11,7 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { getReceivedInvitationsRequest, handleInvitationRequest as handleInvitationAction } from "../../../store/slices/receivedInvitationSlice";
+import {
+  getReceivedInvitationsRequest,
+  handleInvitationRequest as handleInvitationAction,
+} from "../../../store/slices/receivedInvitationSlice";
 
 const InvitationModal = () => {
   const dispatch = useDispatch();
@@ -31,7 +34,7 @@ const InvitationModal = () => {
     }
 
     // Add invitation to processing set
-    setProcessingInvitations(prev => new Set(prev).add(invitationId));
+    setProcessingInvitations((prev) => new Set(prev).add(invitationId));
 
     try {
       dispatch(
@@ -41,7 +44,7 @@ const InvitationModal = () => {
           action: action,
         })
       );
-      
+
       // Show success message
       if (action === "ACCEPT") {
         toast.success("Đã chấp nhận lời mời thành công!");
@@ -52,7 +55,7 @@ const InvitationModal = () => {
       toast.error("Có lỗi xảy ra khi xử lý lời mời!");
     } finally {
       // Remove invitation from processing set
-      setProcessingInvitations(prev => {
+      setProcessingInvitations((prev) => {
         const newSet = new Set(prev);
         newSet.delete(invitationId);
         return newSet;
@@ -74,7 +77,9 @@ const InvitationModal = () => {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               {invitations.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">Không có lời mời nào</p>
+                <p className="text-gray-500 text-center py-4">
+                  Không có lời mời nào
+                </p>
               ) : (
                 invitations.map((invitation) => (
                   <div
@@ -90,7 +95,10 @@ const InvitationModal = () => {
                         <div className="flex gap-2">
                           <Button
                             variant="default"
-                            disabled={processingInvitations.has(invitation.id) || isLoading}
+                            disabled={
+                              processingInvitations.has(invitation.id) ||
+                              isLoading
+                            }
                             onClick={() =>
                               handleInvitationRequest(
                                 invitation.group.id,
@@ -99,11 +107,16 @@ const InvitationModal = () => {
                               )
                             }
                           >
-                            {processingInvitations.has(invitation.id) ? "Đang xử lý..." : "Chấp nhận"}
+                            {processingInvitations.has(invitation.id)
+                              ? "Đang xử lý..."
+                              : "Chấp nhận"}
                           </Button>
                           <Button
                             variant="destructive"
-                            disabled={processingInvitations.has(invitation.id) || isLoading}
+                            disabled={
+                              processingInvitations.has(invitation.id) ||
+                              isLoading
+                            }
                             onClick={() =>
                               handleInvitationRequest(
                                 invitation.group.id,
@@ -112,7 +125,9 @@ const InvitationModal = () => {
                               )
                             }
                           >
-                            {processingInvitations.has(invitation.id) ? "Đang xử lý..." : "Từ chối"}
+                            {processingInvitations.has(invitation.id)
+                              ? "Đang xử lý..."
+                              : "Từ chối"}
                           </Button>
                         </div>
                       </div>
